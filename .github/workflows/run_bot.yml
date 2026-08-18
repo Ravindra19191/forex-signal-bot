@@ -1,29 +1,30 @@
 name: Forex Signal Bot
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 * * * *' # සෑම පැයකට වතාවක්ම ස්වයංක්‍රීයව ක්‍රියාත්මක වේ
+  workflow_dispatch: # ඕනෑම වෙලාවක අතින් (Manual) රන් කිරීමට
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       - name: Install dependencies
         run: |
-          pip install requests python-telegram-bot
+          python -m larch --upgrade pip || true
+          pip install pandas numpy requests
 
-      - name: Run Bot Script
+      - name: Run bot script
         env:
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python bot.py
